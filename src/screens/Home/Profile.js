@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingBottom: 35,
+        paddingBottom: 20,
         paddingTop: 50
     },
     headerTitle: {
