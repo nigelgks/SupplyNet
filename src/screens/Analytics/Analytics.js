@@ -192,7 +192,7 @@ const Analytics = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.bottomContainer} onPress={() => navigation.navigate('InventoryPerformance')}>
+        <TouchableOpacity style={styles.bottomContainer} onPress={() => navigation.navigate('InventoryPerformance', {total: products.length, level: ((products.length/20)*100).toFixed(2)})}>
           <ImageBackground
             source={require('../../../assets/inventory.jpg')}
             style={[styles.imageLayout]}
@@ -204,7 +204,7 @@ const Analytics = ({ navigation }) => {
         </TouchableOpacity>
 
         {type === "retailer" ? (
-          <TouchableOpacity style={styles.bottomContainer} onPress={() => navigation.navigate('OrderInsights', )}>
+          <TouchableOpacity style={styles.bottomContainer} onPress={() => navigation.navigate('OrderInsights', {expenses: expenses, rfq: orders.length})}>
             <ImageBackground
               source={require('../../../assets/sales.png')}
               style={styles.imageLayout}
@@ -216,7 +216,7 @@ const Analytics = ({ navigation }) => {
           </TouchableOpacity>
         ) : (
           <>
-            <TouchableOpacity style={styles.bottomContainer} onPress={() => navigation.navigate('SalesPerformance')}>
+            <TouchableOpacity style={styles.bottomContainer} onPress={() => navigation.navigate('SalesPerformance', {expenses: expenses})}>
               <ImageBackground
                 source={require('../../../assets/sales.png')}
                 style={styles.imageLayout}

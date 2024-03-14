@@ -15,7 +15,9 @@ function average(barData) {
   return sum(barData) / barData.length;
 };
 
-const OrderInsights = ({ navigation }) => {
+const OrderInsights = ({ navigation, route }) => {
+  const { expenses, rfq } = route.params;
+
   const barDataExpenses = [
     { value: 23.15, label: '1' },
     { value: 2.20, label: '2' },
@@ -213,7 +215,7 @@ const OrderInsights = ({ navigation }) => {
               Total Expenses (RM)
             </Text>
             <Text style={styles.smallContainerValue}>
-              538.80
+              {expenses}
             </Text>
           </View>
           <View style={styles.smallContainer}>
@@ -221,7 +223,7 @@ const OrderInsights = ({ navigation }) => {
               Total RFQ
             </Text>
             <Text style={styles.smallContainerValue}>
-              25
+              {rfq}
             </Text>
           </View>
         </View>
@@ -231,7 +233,7 @@ const OrderInsights = ({ navigation }) => {
               Average Expenses (RM)
             </Text>
             <Text style={styles.smallContainerValue}>
-              {(538.8/30).toFixed(2)}
+              {(expenses/30).toFixed(2)}
             </Text>
           </View>
           <View style={styles.smallContainer}>
@@ -239,7 +241,7 @@ const OrderInsights = ({ navigation }) => {
               Average RFQ
             </Text>
             <Text style={styles.smallContainerValue}>
-              {(25/30).toFixed(1)}
+              {(rfq/30).toFixed(1)}
             </Text>
           </View>
         </View>

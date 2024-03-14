@@ -6,7 +6,9 @@ import { Ionicons } from '@expo/vector-icons';
 const baseColor = "#162033";
 const neonColor = "#a6fd29";
 
-const InventoryPerformance = ({ navigation }) => {
+const InventoryPerformance = ({ navigation, route }) => {
+  const { total, level } = route.params;
+
   const inventoryCompCat = [
     {
       value: 45,
@@ -138,7 +140,7 @@ const InventoryPerformance = ({ navigation }) => {
               Total Products
             </Text>
             <Text style={styles.smallContainerValue}>
-              155
+              {total}
             </Text>
           </View>
           <View style={styles.smallContainer}>
@@ -146,7 +148,7 @@ const InventoryPerformance = ({ navigation }) => {
               Inventory Level
             </Text>
             <Text style={styles.smallContainerValue}>
-              80.28%
+              {level}%
             </Text>
           </View>
         </View>

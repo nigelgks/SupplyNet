@@ -15,7 +15,9 @@ function average(barData) {
   return sum(barData) / barData.length;
 };
 
-const SalesPerformance = ({ navigation }) => {
+const SalesPerformance = ({ navigation, route }) => {
+  const { expenses } = route.params;
+
   const barDataRev = [
     { value: 653, label: '1' },
     { value: 415, label: '2' },
@@ -253,7 +255,7 @@ const SalesPerformance = ({ navigation }) => {
             Total Revenue
           </Text>
           <Text style={styles.topContainerValue}>
-            RM 2,053.50
+            RM {expenses}
           </Text>
         </View>
 
@@ -263,7 +265,7 @@ const SalesPerformance = ({ navigation }) => {
               Average Revenue
             </Text>
             <Text style={styles.smallContainerValue}>
-              RM {2053.50/30}
+              RM {(expenses/30).toFixed(2)}
             </Text>
           </View>
           <View style={styles.smallContainer}>
