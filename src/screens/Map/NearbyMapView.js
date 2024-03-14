@@ -22,7 +22,7 @@ const NearbyMapView = ({ route, navigation }) => {
       key={item.id}
       index={index}
       coordinate={{ latitude: item.coords.latitude, longitude: item.coords.longitude }}
-      onPress={() => {setIndex(index), console.log(index)}}
+      onPress={() => {setIndex(index)}}
     >
       <Ionicons name="location-sharp" size={30} color="red" />
     </Marker>

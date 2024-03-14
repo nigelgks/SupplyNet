@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import MapViewStyle from '../../utils/MapViewStyle.json';
 import { UserLocationContext } from '../../context/UserLocationContext';
@@ -36,7 +36,7 @@ const ShopMapView = ({ route }) => {
         </Marker>
       </MapView>
 
-      <View style={styles.bottomContainer}>
+      <ScrollView contentContainerStyle={styles.bottomContainer}>
           <Text style={styles.titleText}>{detail.name}</Text>
           <Text style={styles.addressText}>{detail.address}, {detail.city}, {detail.postcode}, {detail.state}</Text>
           
@@ -45,7 +45,7 @@ const ShopMapView = ({ route }) => {
             <Text style={styles.contactText}>Phone Number: {detail.phone}</Text>
             <Text style={styles.contactText}>Email: {detail.email}</Text>
           </View>
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -56,11 +56,10 @@ const styles = StyleSheet.create({
   },
   map: {
     width: '100%',
-    height: 400,
+    height: '70%',
   },
   bottomContainer: {
-    padding: 20,
-    flex: 1
+    padding: 20
   },
   titleText: {
     fontSize: 20,
@@ -70,12 +69,10 @@ const styles = StyleSheet.create({
   addressText: {
     fontSize: 16,
     fontWeight: '500',
-    paddingBottom: 30,
+    paddingBottom: 20,
   },
   contactContainer: {
-    position: 'absolute',
-    bottom: 0,
-    padding: 20
+    paddingTop: 5
   },
   contactText: {
     fontSize: 15,

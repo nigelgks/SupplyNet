@@ -125,14 +125,14 @@ const Home = ({ navigation }) => {
 
     const renderOrder = ({ item }) => {
         return(
-            <TouchableOpacity 
+            <TouchableOpacity
                 style={styles.orderContainer}
-                onPress={() => navigation.navigate('OrderDetails', { 
-                    item, 
+                onPress={() => navigation.navigate('OrderDetails', {
+                    item,
                     user: currentUser
                 })}
             >
-                <Image source={{ uri: item.image }} style={styles.itemImage} />
+                <Image source={{ uri: item.image }} style={styles.itemImage}/>
                 <View style={styles.itemBox}>
                     <View style={styles.itemTopRow}>
                         <Text style={styles.itemName}>{item.name}</Text>
