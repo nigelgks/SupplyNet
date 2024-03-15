@@ -1,4 +1,4 @@
-export const Dummy = ( array ) => {
+export const ExpensesCalculator = ( array ) => {
     let total = 0;
 
     for (let i = 0; i < array.length; i++) {
@@ -8,4 +8,4 @@ export const Dummy = ( array ) => {
     return total;
 };
 
-export default Dummy;
+export default ExpensesCalculator;

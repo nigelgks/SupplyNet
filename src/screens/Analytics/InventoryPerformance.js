@@ -1,24 +1,17 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import { PieChart } from "react-native-gifted-charts";
 import { Ionicons } from '@expo/vector-icons';
 
 const baseColor = "#162033";
 const neonColor = "#a6fd29";
+const pieChartColor = [neonColor, '#BDB2FA', '#6499E9', '#FFA5BA'];
 
 const InventoryPerformance = ({ navigation, route }) => {
-  const { total, level } = route.params;
+  const { inventory, level } = route.params;
 
-  const inventoryCompCat = [
-    {
-      value: 45,
-      color: neonColor,
-      focused: true,
-    },
-    {value: 24, color: '#BDB2FA'},
-    {value: 21, color: '#6499E9'},
-    {value: 10, color: '#FFA5BA'},
-  ];
+  const [ categoryArr, setCategoryArr ] = useState('');
+  const [ categoryComp, setCategoryComp ] = useState('');
 
   const inventoryCompProd = [
     {
@@ -45,7 +38,7 @@ const InventoryPerformance = ({ navigation, route }) => {
     );
   };
 
-  const renderLegendProd = () => {
+  const renderLegendCat = () => {
     return (
       <>
         <View
@@ -53,35 +46,18 @@ const InventoryPerformance = ({ navigation, route }) => {
             marginLeft: 25,
             marginRight: 20
           }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center'
-            }}>
-            {renderDot(neonColor)}
-            <Text style={{color: 'white'}}>Eggs: 45%</Text>
-          </View>
-          <View
-            style={{flexDirection: 'row', alignItems: 'center'}}>
-            {renderDot('#BDB2FA')}
-            <Text style={{color: 'white'}}>Chicken Wings: 24%</Text>
-          </View>
-          <View
-            style={{flexDirection: 'row', alignItems: 'center'}}>
-            {renderDot('#6499E9')}
-            <Text style={{color: 'white'}}>Drumsticks: 21%</Text>
-          </View>
-          <View
-            style={{flexDirection: 'row', alignItems: 'center'}}>
-            {renderDot('#FFA5BA')}
-            <Text style={{color: 'white'}}>Others: 10%</Text>
-          </View>
+          {categoryArr.map(({ category, color, value }, index) => (
+            <View key={index} style={{ flexDirection: 'row', alignItems: 'center' }}>
+              {renderDot(color)}
+              <Text style={{ color: 'white' }}>{category}: {value}%</Text>
+            </View>
+          ))}
         </View>
       </>
     );
   };
 
-  const renderLegendCat = () => {
+  const renderLegendProd = () => {
     return (
       <>
         <View
@@ -117,6 +93,53 @@ const InventoryPerformance = ({ navigation, route }) => {
     );
   };
 
+  useEffect(() => {
+    // Calculate category frequency
+    const frequencyMap = inventory.reduce((map, item) => {
+      map[item.category] = (map[item.category] || 0) + 1;
+      return map;
+    }, {});
+
+    // Sort categories based on frequency
+    const sortedCategories = Object.keys(frequencyMap).sort((a, b) => frequencyMap[b] - frequencyMap[a]);
+
+    // Determine top three and calculate percentage
+    const topCategories = sortedCategories.slice(0, 3);
+    const totalItems = inventory.length;
+    const topCategoryPercentages = topCategories.map(category => ({
+      category,
+      value: ((frequencyMap[category] / totalItems) * 100).toFixed(2)
+    }));
+
+    if (topCategoryPercentages.length > 3) {
+      // Combine other categories into Other and calculate percentage
+      const othersPercentage = ((totalItems - topCategoryPercentages.reduce((sum, item) => sum + frequencyMap[item.category], 0)) / totalItems) * 100;
+
+      // New array with all categories and percentages
+      topCategoryPercentages.concat([{ category: "Others", value: othersPercentage.toFixed(2) }]);
+    };
+
+    const arrayWithPercentages = topCategoryPercentages.map(({ category, value, color }) => ({ value: parseFloat(value), color }));
+
+    // Assign color
+    arrayWithPercentages.forEach((item, index) => {
+      if (index < pieChartColor.length) {
+        item.color = pieChartColor[index];
+      };
+      if (index < 1) {
+        item.focused = true;
+      }
+    });
+    topCategoryPercentages.forEach((item, index) => {
+      if (index < pieChartColor.length) {
+        item.color = pieChartColor[index];
+      };
+    });
+
+    setCategoryArr(topCategoryPercentages);
+    setCategoryComp(arrayWithPercentages);
+  }, [inventory]);
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -140,7 +163,7 @@ const InventoryPerformance = ({ navigation, route }) => {
               Total Products
             </Text>
             <Text style={styles.smallContainerValue}>
-              {total}
+              {inventory.length}
             </Text>
           </View>
           <View style={styles.smallContainer}>
@@ -158,7 +181,7 @@ const InventoryPerformance = ({ navigation, route }) => {
               Inventory Turnover
             </Text>
             <Text style={styles.smallContainerValue}>
-              25
+              2.44
             </Text>
           </View>
           <View style={styles.smallContainer}>
@@ -166,7 +189,7 @@ const InventoryPerformance = ({ navigation, route }) => {
               Days Sales
             </Text>
             <Text style={styles.smallContainerValue}>
-              14 days
+              {(30/2.44).toFixed(2)}
             </Text>
           </View>
         </View>
@@ -175,28 +198,32 @@ const InventoryPerformance = ({ navigation, route }) => {
           <Text style={styles.chartContainerTitle}>
             Inventory Composition (per category)
           </Text>
-          <View style={{paddingTop: 20, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center'}}>
-            <PieChart
-              data={inventoryCompCat}
-              donut
-              sectionAutoFocus
-              radius={75}
-              innerRadius={50}
-              innerCircleColor={baseColor}
-              centerLabelComponent={() => {
-                return (
-                  <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                    <Text
-                      style={{fontSize: 22, color: 'white', fontWeight: 'bold'}}>
-                      30%
-                    </Text>
-                    <Text style={{fontSize: 14, color: 'white'}}>Poultry</Text>
-                  </View>
-                );
-              }}
-            />
-            {renderLegendCat()}
-          </View>
+          {categoryComp.length > 0 ? (
+            <View style={{paddingTop: 20, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center'}}>
+              <PieChart
+                data={categoryComp}
+                donut
+                sectionAutoFocus
+                radius={75}
+                innerRadius={50}
+                innerCircleColor={baseColor}
+                centerLabelComponent={() => {
+                  return (
+                    <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                      <Text
+                        style={{fontSize: 22, color: 'white', fontWeight: 'bold'}}>
+                        {parseInt(categoryArr[0].value)}%
+                      </Text>
+                      <Text style={{fontSize: 14, color: 'white'}}>{categoryArr[0].category}</Text>
+                    </View>
+                  );
+                }}
+              />
+              {renderLegendCat()}
+            </View>
+          ) : (
+            <></>
+          )}
         </View>
         <View style={styles.chartContainer}>
           <Text style={styles.chartContainerTitle}>

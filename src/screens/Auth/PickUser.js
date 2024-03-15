@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, TouchableOpacity, StyleSheet } from 'react-native';
+import { Text, View, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
 import { Ionicons, FontAwesome } from '@expo/vector-icons';
 
 const PickUser = ({ navigation }) => {
@@ -7,20 +7,28 @@ const PickUser = ({ navigation }) => {
         <View style={styles.container}>
             <Text style={styles.title}>Choose your user type</Text>
             <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={() => navigation.navigate('RegisterUser', {userType: 'supplier', title: 'Supplier Registration'})}
-                >
-                    <Ionicons name="ios-people" size={40} color="white" />
-                    <Text style={styles.buttonText}>Supplier</Text>
+                <TouchableOpacity onPress={() => navigation.navigate('RegisterUser', {userType: 'supplier', title: 'Supplier Registration'})}>
+                    <ImageBackground 
+                        source={require('../../../assets/supplier.jpg')}
+                        style={styles.button}
+                        imageStyle={styles.image}
+                    >
+                        <View style={[styles.viewText, {backgroundColor: "#a6fd29"}]}>
+                            <Text style={[styles.buttonText, {color: 'black'}]}>Supplier</Text> 
+                        </View>
+                    </ImageBackground>         
                 </TouchableOpacity>
-                
-                <TouchableOpacity
-                    style={[styles.button, styles.retailerButton]}
-                    onPress={() => navigation.navigate('RegisterUser', {userType: 'retailer', title: 'Retailer Registration'})}
-                >
-                    <FontAwesome name="shopping-bag" size={40} color="white" />
-                    <Text style={styles.buttonText}>Retailer</Text>
+
+                <TouchableOpacity onPress={() => navigation.navigate('RegisterUser', {userType: 'retailer', title: 'Retailer Registration'})}>
+                    <ImageBackground 
+                        source={require('../../../assets/retailer.jpg')}
+                        style={styles.button}
+                        imageStyle={styles.image}
+                    >
+                        <View style={styles.viewText}>
+                            <Text style={[styles.buttonText, {color: 'black'}]}>Retailer</Text> 
+                        </View>
+                    </ImageBackground>
                 </TouchableOpacity>
             </View>
         </View>
@@ -40,26 +48,33 @@ const styles = StyleSheet.create({
         marginBottom: 30
     },
     buttonContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+        alignContent: 'center',
         width: '100%'
     },
     button: {
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#007bff',
         borderRadius: 10,
         paddingVertical: 20,
         paddingHorizontal: 30,
-        width: '45%'
-    },
-    retailerButton: {
-        backgroundColor: '#28a745'
+        marginBottom: 20,
+        height: 120
     },
     buttonText: {
         color: 'white',
         fontSize: 18,
-        marginTop: 10
+        fontWeight: '600',
+        padding: 5
+    },
+    viewText: {
+        width: 150,
+        alignItems: 'center',
+        backgroundColor: "#a6fd29",
+        borderRadius: 8
+    },
+    image: {
+        borderRadius: 8,
+        resizeMode: 'cover'
     }
 })
 

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { TouchableOpacity, StyleSheet, Text, View, ScrollView, ImageBackground } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { UserProfileContext } from '../../context/UserProfileContext';
-import { Dummy } from '../../utils/Dummy';
+import { ExpensesCalculator } from '../../components/ExpensesCalculator';
 import { FIREBASE_DB } from "../../../firebaseConfig";
 import { collection, onSnapshot } from "firebase/firestore";
 
@@ -28,7 +28,7 @@ const Analytics = ({ navigation }) => {
         };
       };
 
-      const exp = Dummy(totalArray);
+      const exp = ExpensesCalculator(totalArray);
       setExpenses(exp);
     };
   }, [orders]);
@@ -192,7 +192,7 @@ const Analytics = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.bottomContainer} onPress={() => navigation.navigate('InventoryPerformance', {total: products.length, level: ((products.length/20)*100).toFixed(2)})}>
+        <TouchableOpacity style={styles.bottomContainer} onPress={() => navigation.navigate('InventoryPerformance', {inventory: products, level: ((products.length/20)*100).toFixed(2)})}>
           <ImageBackground
             source={require('../../../assets/inventory.jpg')}
             style={[styles.imageLayout]}
