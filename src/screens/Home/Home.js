@@ -44,12 +44,12 @@ const Home = ({ navigation }) => {
     };
 
     useEffect(() => {
-        if (!currentUser) {
-          return;
+        if (currentUser.length > 0) {
+            setType(currentUser[0].type);
         } else {
-          setType(currentUser[0].type);
+            return;
         }
-    });
+    }, [currentUser]);
 
     useEffect(() => {
         const shopRef = collection(FIREBASE_DB, 'profile');
@@ -74,53 +74,57 @@ const Home = ({ navigation }) => {
     }, [user.uid]);
 
     useEffect(() => {
-        if (!currentUser) return;
-        
-        const shopRef = collection(FIREBASE_DB, 'profile');
+        if (currentUser.length > 0) {
+            const shopRef = collection(FIREBASE_DB, 'profile');
 
-        const subscriber = onSnapshot(shopRef, {
-            next: (snapshot) => {
-                const items = [];
-                snapshot.docs.forEach((doc) => {
-                    const data = doc.data();
-                    if ((currentUser[0].type === 'retailer') && ((data.uid !== user.uid) || (data.type === 'supplier'))) {
-                        items.push({
-                            id: doc.id,
-                            ...doc.data()
-                        });
-                    };
-                });
-                setRetails(items);
-            }
-        });
-        
-        return () => subscriber();
+            const subscriber = onSnapshot(shopRef, {
+                next: (snapshot) => {
+                    const items = [];
+                    snapshot.docs.forEach((doc) => {
+                        const data = doc.data();
+                        if ((currentUser[0].type === 'retailer') && ((data.uid !== user.uid) || (data.type === 'supplier'))) {
+                            items.push({
+                                id: doc.id,
+                                ...doc.data()
+                            });
+                        };
+                    });
+                    setRetails(items);
+                }
+            });
+            
+            return () => subscriber();
+        } else {
+            return;
+        };
     }, [currentUser, user.uid]);
 
     useEffect(() => {
-        if (!currentUser) return;
+        if (currentUser.length > 0) {
+            const orderRef = collection(FIREBASE_DB, 'order');
 
-        const orderRef = collection(FIREBASE_DB, 'order');
-
-        const subscriber = onSnapshot(orderRef, {
-            next: (snapshot) => {
-                const pendingArr = [];
-
-                snapshot.docs.forEach((doc) => {
-                    const data = doc.data();
-
-                    if ((data.retailer_uid === user.uid || data.supplier_uid === user.uid) && data.status === "Pending") {
-                        pendingArr.push({
-                            id: doc.id,
-                            ...doc.data()
-                        });
-                    }
-                });
-
-                setPending(pendingArr);
-            }
-        });
-        return () => subscriber();
+            const subscriber = onSnapshot(orderRef, {
+                next: (snapshot) => {
+                    const pendingArr = [];
+    
+                    snapshot.docs.forEach((doc) => {
+                        const data = doc.data();
+    
+                        if ((data.retailer_uid === user.uid || data.supplier_uid === user.uid) && data.status === "Pending") {
+                            pendingArr.push({
+                                id: doc.id,
+                                ...doc.data()
+                            });
+                        }
+                    });
+    
+                    setPending(pendingArr);
+                }
+            });
+            return () => subscriber();
+        } else {
+            return;
+        };
     }, [currentUser, user.uid]);
 
     const renderOrder = ({ item }) => {
@@ -161,16 +165,20 @@ const Home = ({ navigation }) => {
                     <Text style={styles.titleText}>Welcome home, {currentUser.length > 0 ? currentUser[0].username : ''}</Text>
 
                     <ScrollView style={styles.mainContainer} horizontal={true} showsHorizontalScrollIndicator={false}>
-                        {type === 'retailer' ? (
-                            <TouchableOpacity style={styles.mainButton} onPress={() => navigation.navigate('Shopping', { retails, uid: user.uid })}>
-                                <Entypo name="shop" size={60} color="black" style={{verticalAlign: 'top'}}/>
-                                <Text style={styles.mainButtonText}>Shopping</Text>
-                            </TouchableOpacity>
+                        {type !== "" ? (
+                            type === 'retailer' ? (
+                                <TouchableOpacity style={styles.mainButton} onPress={() => navigation.navigate('Shopping', { retails, uid: user.uid })}>
+                                    <Entypo name="shop" size={60} color="black" style={{verticalAlign: 'top'}}/>
+                                    <Text style={styles.mainButtonText}>Shopping</Text>
+                                </TouchableOpacity>
+                            ) : (
+                                <TouchableOpacity style={styles.mainButton} onPress={() => navigation.navigate('AddItem')}>
+                                    <Ionicons name="add-circle-outline" size={60} color="black" style={{verticalAlign: 'top'}}/>
+                                    <Text style={styles.mainButtonText}>Add Item</Text>
+                                </TouchableOpacity>
+                            )
                         ) : (
-                            <TouchableOpacity style={styles.mainButton} onPress={() => navigation.navigate('AddItem')}>
-                                <Ionicons name="add-circle-outline" size={60} color="black" style={{verticalAlign: 'top'}}/>
-                                <Text style={styles.mainButtonText}>Add Item</Text>
-                            </TouchableOpacity>
+                            <></>
                         )}
                         <TouchableOpacity style={styles.mainButton} onPress={() => navigation.navigate('Promotion')}>
                             <Fontisto name="shopping-sale" size={60} color="black" />

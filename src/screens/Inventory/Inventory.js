@@ -162,7 +162,8 @@ const styles = StyleSheet.create({
     header: {
         fontSize: 30,
         fontWeight: 'bold',
-        paddingHorizontal: 20
+        paddingHorizontal: 20,
+        paddingBottom: 5
     },
     searchInput: {
       height: 40,

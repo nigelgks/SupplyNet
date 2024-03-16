@@ -285,6 +285,7 @@ const Profile = () => {
                     onChangeText={setSSMNo}
                     value={ssmNo}
                     keyboardType="numeric"
+                    maxLength={12}
                 />
                 <Text style={styles.titleText}>Billing Address and Location</Text>
                 <Text style={styles.inputText}>Phone Number</Text>
