@@ -2,17 +2,13 @@ import React, { useContext } from 'react';
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import MapViewStyle from '../../utils/MapViewStyle.json';
-import { UserLocationContext } from '../../context/UserLocationContext';
-import { UserProfileContext } from '../../context/UserProfileContext';
 import { Ionicons } from '@expo/vector-icons';
 
 const ShopMapView = ({ route }) => {
   const { detail } = route.params;
-  const {user} = useContext(UserProfileContext);
-  const {location} = useContext(UserLocationContext);
   const coords = detail.coords;
   
-  return location?.latitude&&(
+  return(
     <View style={styles.container}>
       <MapView
         style={styles.map}

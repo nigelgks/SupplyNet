@@ -12,6 +12,7 @@ const NearbyMapView = ({ route, navigation }) => {
   const flatListRef = useRef(null);
   const { location } = useContext(UserLocationContext);
   const [ index, setIndex ] = useState(0);
+  const [ shopLocation, setShopLocation ] = useState('');
 
   const userLat = location?.latitude;
   const userLon = location?.longitude;
@@ -59,7 +60,7 @@ const NearbyMapView = ({ route, navigation }) => {
     index
   });
 
-  return location?.latitude&&(
+  return(
       <View style={styles.container}>
         <MapView
           style={styles.map}
