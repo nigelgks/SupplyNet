@@ -82,7 +82,7 @@ const Home = ({ navigation }) => {
                     const items = [];
                     snapshot.docs.forEach((doc) => {
                         const data = doc.data();
-                        if ((currentUser[0].type === 'retailer') && ((data.uid !== user.uid) || (data.type === 'supplier'))) {
+                        if ((currentUser[0].type === 'retailer') && ((data.uid !== user.uid) && (data.type === 'supplier'))) {
                             items.push({
                                 id: doc.id,
                                 ...doc.data()
@@ -92,7 +92,6 @@ const Home = ({ navigation }) => {
                     setRetails(items);
                 }
             });
-            
             return () => subscriber();
         } else {
             return;
@@ -117,7 +116,6 @@ const Home = ({ navigation }) => {
                             });
                         }
                     });
-    
                     setPending(pendingArr);
                 }
             });
