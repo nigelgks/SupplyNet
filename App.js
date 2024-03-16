@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Feather } from "@expo/vector-icons"
+import { AntDesign } from '@expo/vector-icons';
+import { Feather } from "@expo/vector-icons";
+import { Foundation } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import * as Location from 'expo-location';
@@ -48,55 +51,89 @@ const AuthStack = () => (
 
 const MainTabNavigator = () => (
   <Tab.Navigator 
-  //   screenOptions={{
-  //   tabBarActiveTintColor: 'tomato',
-  //   tabBarInactiveTintColor: 'grey',
-  //   tabBarStyle: {
-  //       backgroundColor: 'lightblue'
-  //   },
-  //   headerStyle: {
-  //       backgroundColor: 'lightblue'
-  //   }
-  // }}
+    screenOptions={{
+      tabBarActiveTintColor: 'black',
+      tabBarInactiveTintColor: 'grey',
+      tabBarLabelStyle: {
+        fontSize: 11,
+        fontWeight: '600',
+        paddingBottom: 3
+      }
+    }}
   >
     <Tab.Screen name="Home" component={Home} options={{ headerShown: false, 
       tabBarIcon: ({ focused }) => (
-        <Feather 
-          name={'home'}
-          size={20}
-        />
+        focused ? (
+          <Foundation 
+            name="home" 
+            size={24}
+          />
+        ) : (
+          <Feather 
+            name={'home'}
+            size={20}
+          />
+        )
       )
     }}/>
     <Tab.Screen name="Orders" component={Orders} options={{ headerShown: false, 
       tabBarIcon: ({ focused }) => (
-        <MaterialCommunityIcons 
-          name={'order-bool-ascending'}
-          size={20}
-        />
+        focused ? (
+          <MaterialCommunityIcons 
+            name="order-bool-descending" 
+            size={20} 
+          />
+        ) : (
+          <MaterialCommunityIcons 
+            name={'order-bool-ascending'}
+            size={20}
+          />
+        )
       )
     }}/>
     <Tab.Screen name="Inventory" component={Inventory} options={{ headerShown: false, 
       tabBarIcon: ({ focused }) => (
-        <MaterialIcons 
-          name={'inventory'}
-          size={20}
-        />
+        focused ? (
+          <MaterialIcons 
+            name={'inventory'}
+            size={20}
+          />
+        ) : (
+          <AntDesign 
+            name="inbox" 
+            size={20}
+          />
+        )
       )
     }}/>
     <Tab.Screen name="Messages" component={Messages} options={{ headerShown: false, 
       tabBarIcon: ({ focused }) => (
-        <MaterialCommunityIcons 
-          name={'message-badge-outline'}
-          size={20}
-        />
+        focused ? (
+          <MaterialCommunityIcons 
+            name="message-badge" 
+            size={20} 
+            color="black" />
+        ) : (
+          <MaterialCommunityIcons 
+            name={'message-badge-outline'}
+            size={20}
+          />
+        )
       )
     }}/>
     <Tab.Screen name="Profile" component={Profile} options={{ headerShown: false, 
       tabBarIcon: ({ focused }) => (
-        <Feather 
-          name={'user'}
-          size={20}
-        />
+        focused ? (
+          <FontAwesome 
+            name="user-circle-o" 
+            size={20}
+          />
+        ) : (
+          <FontAwesome 
+            name="user-circle" 
+            size={20}
+          />
+        )
       )
     }}/>
   </Tab.Navigator>
