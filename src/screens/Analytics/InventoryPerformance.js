@@ -2,27 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import { PieChart } from "react-native-gifted-charts";
 import { Ionicons } from '@expo/vector-icons';
+import { CategoryPercentage } from '../../components/CategoryPercentage';
+import { ProductPercentage } from '../../components/ProductPercentage';
 
 const baseColor = "#162033";
 const neonColor = "#a6fd29";
-const pieChartColor = [neonColor, '#BDB2FA', '#6499E9', '#FFA5BA'];
 
 const InventoryPerformance = ({ navigation, route }) => {
   const { inventory, level } = route.params;
 
   const [ categoryArr, setCategoryArr ] = useState('');
   const [ categoryComp, setCategoryComp ] = useState('');
-
-  const inventoryCompProd = [
-    {
-      value: 30,
-      color: neonColor,
-      focused: true,
-    },
-    {value: 28, color: '#BDB2FA'},
-    {value: 22, color: '#6499E9'},
-    {value: 20, color: '#FFA5BA'},
-  ];
+  const [ productArr, setProductArr ] = useState('');
+  const [ productComp, setProductComp ] = useState('');
 
   const renderDot = color => {
     return (
@@ -44,12 +36,12 @@ const InventoryPerformance = ({ navigation, route }) => {
         <View
           style={{
             marginLeft: 25,
-            marginRight: 20
+            paddingRight: 160
           }}>
-          {categoryArr.map(({ category, color, value }, index) => (
+          {categoryArr.map(({ category, color, percentage }, index) => (
             <View key={index} style={{ flexDirection: 'row', alignItems: 'center' }}>
               {renderDot(color)}
-              <Text style={{ color: 'white' }}>{category}: {value}%</Text>
+              <Text style={{ color: 'white' }}>{category}: {percentage}%</Text>
             </View>
           ))}
         </View>
@@ -63,81 +55,34 @@ const InventoryPerformance = ({ navigation, route }) => {
         <View
           style={{
             marginLeft: 25,
-            marginRight: 20
+            paddingRight: 160
           }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center'
-            }}>
-            {renderDot(neonColor)}
-            <Text style={{color: 'white'}}>Poultry: 30%</Text>
-          </View>
-          <View
-            style={{flexDirection: 'row', alignItems: 'center'}}>
-            {renderDot('#BDB2FA')}
-            <Text style={{color: 'white'}}>Eggs: 28%</Text>
-          </View>
-          <View
-            style={{flexDirection: 'row', alignItems: 'center'}}>
-            {renderDot('#6499E9')}
-            <Text style={{color: 'white'}}>Meat: 22%</Text>
-          </View>
-          <View
-            style={{flexDirection: 'row', alignItems: 'center'}}>
-            {renderDot('#FFA5BA')}
-            <Text style={{color: 'white'}}>Others: 20%</Text>
-          </View>
+          {productArr.map(({ name, color, percentage }, index) => (
+            <View key={index} style={{ flexDirection: 'row', alignItems: 'center' }}>
+              {renderDot(color)}
+              <Text style={{ color: 'white' }}>{name}: {percentage}%</Text>
+            </View>
+          ))}
         </View>
       </>
     );
   };
 
   useEffect(() => {
-    // Calculate category frequency
-    const frequencyMap = inventory.reduce((map, item) => {
-      map[item.category] = (map[item.category] || 0) + 1;
-      return map;
-    }, {});
+    const array = inventory;
+    
+    let topCategoryArray = CategoryPercentage(array);
+    let topProductArray = ProductPercentage(array);
 
-    // Sort categories based on frequency
-    const sortedCategories = Object.keys(frequencyMap).sort((a, b) => frequencyMap[b] - frequencyMap[a]);
-
-    // Determine top three and calculate percentage
-    const topCategories = sortedCategories.slice(0, 3);
-    const totalItems = inventory.length;
-    const topCategoryPercentages = topCategories.map(category => ({
-      category,
-      value: ((frequencyMap[category] / totalItems) * 100).toFixed(2)
-    }));
-
-    if (topCategoryPercentages.length > 3) {
-      // Combine other categories into Other and calculate percentage
-      const othersPercentage = ((totalItems - topCategoryPercentages.reduce((sum, item) => sum + frequencyMap[item.category], 0)) / totalItems) * 100;
-
-      // New array with all categories and percentages
-      topCategoryPercentages.concat([{ category: "Others", value: othersPercentage.toFixed(2) }]);
-    };
-
-    const arrayWithPercentages = topCategoryPercentages.map(({ category, value, color }) => ({ value: parseFloat(value), color }));
-
-    // Assign color
-    arrayWithPercentages.forEach((item, index) => {
-      if (index < pieChartColor.length) {
-        item.color = pieChartColor[index];
-      };
-      if (index < 1) {
-        item.focused = true;
-      }
-    });
-    topCategoryPercentages.forEach((item, index) => {
-      if (index < pieChartColor.length) {
-        item.color = pieChartColor[index];
-      };
-    });
+    const topCategoryPercentages = topCategoryArray[0];
+    const topProductPercentages = topProductArray[0];
+    const arrayWithCatPercentages = topCategoryArray[1];
+    const arrayWithProdPercentages = topProductArray[1];
 
     setCategoryArr(topCategoryPercentages);
-    setCategoryComp(arrayWithPercentages);
+    setCategoryComp(arrayWithCatPercentages);
+    setProductArr(topProductPercentages);
+    setProductComp(arrayWithProdPercentages);
   }, [inventory]);
 
   return (
@@ -211,10 +156,10 @@ const InventoryPerformance = ({ navigation, route }) => {
                   return (
                     <View style={{justifyContent: 'center', alignItems: 'center'}}>
                       <Text
-                        style={{fontSize: 22, color: 'white', fontWeight: 'bold'}}>
-                        {parseInt(categoryArr[0].value)}%
+                        style={{fontSize: 20, color: 'white', fontWeight: 'bold'}}>
+                        {parseInt(categoryArr[0].percentage)}%
                       </Text>
-                      <Text style={{fontSize: 14, color: 'white'}}>{categoryArr[0].category}</Text>
+                      <Text style={{fontSize: 12, color: 'white', textAlign: 'center'}}>{categoryArr[0].category}</Text>
                     </View>
                   );
                 }}
@@ -229,28 +174,32 @@ const InventoryPerformance = ({ navigation, route }) => {
           <Text style={styles.chartContainerTitle}>
             Inventory Composition (per product)
           </Text>
-          <View style={{paddingTop: 20, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center'}}>
-            <PieChart
-              data={inventoryCompProd}
-              donut
-              sectionAutoFocus
-              radius={75}
-              innerRadius={50}
-              innerCircleColor={baseColor}
-              centerLabelComponent={() => {
-                return (
-                  <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                    <Text
-                      style={{fontSize: 22, color: 'white', fontWeight: 'bold'}}>
-                      45%
-                    </Text>
-                    <Text style={{fontSize: 14, color: 'white'}}>Eggs</Text>
-                  </View>
-                );
-              }}
-            />
-            {renderLegendProd()}
-          </View>
+          {categoryComp.length > 0 ? (
+            <View style={{paddingTop: 20, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center'}}>
+              <PieChart
+                data={productComp}
+                donut
+                sectionAutoFocus
+                radius={75}
+                innerRadius={50}
+                innerCircleColor={baseColor}
+                centerLabelComponent={() => {
+                  return (
+                    <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                      <Text
+                        style={{fontSize: 20, color: 'white', fontWeight: 'bold'}}>
+                        {parseInt(productArr[0].percentage)}%
+                      </Text>
+                      <Text style={{fontSize: 12, color: 'white', textAlign: 'center'}}>{productArr[0].name}</Text>
+                    </View>
+                  );
+                }}
+              />
+              {renderLegendProd()}
+            </View>
+          ) : (
+            <></>
+          )}
         </View>
       </ScrollView>
     </View>
