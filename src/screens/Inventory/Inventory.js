@@ -49,12 +49,15 @@ const Inventory = ({ navigation }) => {
     const renderItem = ({ item }) => {
         const uri = item.image;
 
+        const stock = parseInt(item.stock);
+        const limit = parseInt(item.limit);
+
         return(
             <TouchableOpacity style={styles.itemContainer} onPress={() => navigation.navigate('ItemInventoryDetails', { details: item })}>
                 <Image source={ uri ? {uri} : placeholder } style={styles.itemImage}/>
                 <View style={styles.itemText}>
                     <Text style={styles.itemName}>{item.name}</Text>
-                    <Text style={styles.itemPrice}>({item.stock} left)</Text>
+                    <Text style={[styles.itemStock, (stock <= limit) ? {color: 'red', fontWeight: '500'} : {}]}>({stock} left)</Text>
                 </View>
             </TouchableOpacity>
         );
@@ -207,7 +210,7 @@ const styles = StyleSheet.create({
         fontSize: 13,
         paddingBottom: 5
     },
-    itemPrice: {
+    itemStock: {
         fontSize: 13
     },
     itemList: {

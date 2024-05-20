@@ -2,9 +2,10 @@ import React, { useContext, useEffect, useState } from 'react';
 import { TouchableOpacity, StyleSheet, Text, View, ScrollView, ImageBackground } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { UserProfileContext } from '../../context/UserProfileContext';
-import { ExpensesCalculator } from '../../components/ExpensesCalculator';
+import { ExpRevCalculator } from '../../components/ExpRevCalculator';
 import { FIREBASE_DB } from "../../../firebaseConfig";
 import { collection, onSnapshot } from "firebase/firestore";
+import InventoryCapacity from '../../components/InventoryCapacity';
 
 const baseColor = "#162033";
 const neonColor = "#a6fd29";
@@ -14,12 +15,13 @@ const Analytics = ({ navigation }) => {
   
   const [ type, setType ] = useState('');
   const [ orders, setOrders ] = useState('');
-  const [ expenses, setExpenses ] = useState('');
+  const [ expRev, setExpRev ] = useState('');
   const [ products, setProducts ] = useState('');
   const [ currentUser, setCurrentUser ] = useState('');
+  const [ inventoryCap, setInventoryCap ] = useState('');
 
   useEffect(() => {
-    if (orders.length > 0) {
+    if (orders.length > 0 && products.length > 0) {
       const totalArray = [];
       
       for (let i = 0; i < orders.length; i++) {
@@ -28,10 +30,13 @@ const Analytics = ({ navigation }) => {
         };
       };
 
-      const exp = ExpensesCalculator(totalArray);
-      setExpenses(exp);
+      const val = ExpRevCalculator(totalArray);
+      const cap = InventoryCapacity(products);
+
+      setExpRev(val);
+      setInventoryCap(cap);
     };
-  }, [orders]);
+  }, [orders, products]);
 
   useEffect(() => {
     if (!currentUser) {
@@ -139,7 +144,7 @@ const Analytics = ({ navigation }) => {
                 Total Expenses
               </Text>
               <Text style={styles.topContainerValue}>
-                RM {expenses}
+                RM {expRev}
               </Text>
             </TouchableOpacity>
           ) : (
@@ -148,7 +153,7 @@ const Analytics = ({ navigation }) => {
                 Total Revenue
               </Text>
               <Text style={styles.topContainerValue}>
-                RM {expenses}
+                RM {expRev}
               </Text>
             </TouchableOpacity>
           )
@@ -186,13 +191,17 @@ const Analytics = ({ navigation }) => {
             <Text style={styles.smallContainerTitle}>
               Inventory Level
             </Text>
-            <Text style={styles.smallContainerValue}>
-              {((products.length/20)*100).toFixed(2)}%
-            </Text>
+            {inventoryCap.length > 0 ? (
+              <Text style={styles.smallContainerValue}>
+                {(inventoryCap[0].level).toFixed(2)}%
+              </Text>
+            ) : (
+              <></>
+            )}
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.bottomContainer} onPress={() => navigation.navigate('InventoryPerformance', {inventory: products, level: ((products.length/20)*100).toFixed(2)})}>
+        <TouchableOpacity style={styles.bottomContainer} onPress={() => navigation.navigate('InventoryPerformance', {inventory: products, level: (inventoryCap[0].level).toFixed(2)})}>
           <ImageBackground
             source={require('../../../assets/inventory.jpg')}
             style={[styles.imageLayout]}
@@ -204,7 +213,7 @@ const Analytics = ({ navigation }) => {
         </TouchableOpacity>
 
         {type === "retailer" ? (
-          <TouchableOpacity style={styles.bottomContainer} onPress={() => navigation.navigate('OrderInsights', {expenses: expenses, rfq: orders.length})}>
+          <TouchableOpacity style={styles.bottomContainer} onPress={() => navigation.navigate('OrderInsights', {expRev: expRev, rfq: orders.length})}>
             <ImageBackground
               source={require('../../../assets/sales.png')}
               style={styles.imageLayout}
@@ -216,7 +225,7 @@ const Analytics = ({ navigation }) => {
           </TouchableOpacity>
         ) : (
           <>
-            <TouchableOpacity style={styles.bottomContainer} onPress={() => navigation.navigate('SalesPerformance', {expenses: expenses})}>
+            <TouchableOpacity style={styles.bottomContainer} onPress={() => navigation.navigate('SalesPerformance', {expRev: expRev})}>
               <ImageBackground
                 source={require('../../../assets/sales.png')}
                 style={styles.imageLayout}

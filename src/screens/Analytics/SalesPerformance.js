@@ -16,7 +16,7 @@ function average(barData) {
 };
 
 const SalesPerformance = ({ navigation, route }) => {
-  const { expenses } = route.params;
+  const { expRev } = route.params;
 
   const barDataRev = [
     { value: 653, label: '1' },
@@ -255,7 +255,7 @@ const SalesPerformance = ({ navigation, route }) => {
             Total Revenue
           </Text>
           <Text style={styles.topContainerValue}>
-            RM {expenses}
+            RM {expRev}
           </Text>
         </View>
 
@@ -265,7 +265,7 @@ const SalesPerformance = ({ navigation, route }) => {
               Average Revenue
             </Text>
             <Text style={styles.smallContainerValue}>
-              RM {(expenses/30).toFixed(2)}
+              RM {(expRev/30).toFixed(2)}
             </Text>
           </View>
           <View style={styles.smallContainer}>
